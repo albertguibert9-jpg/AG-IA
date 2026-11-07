@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071b35">
+<title>AGC AI | Construction intelligente</title>
+
+<style>
+:root{
+--navy:#071b35;
+--blue:#087cf0;
+--cyan:#16b8e8;
+--bg:#f3f6fb;
+--white:#fff;
+--text:#192c45;
+--muted:#78889d;
+--border:#e5ebf3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.sidebar{
+position:fixed;top:0;bottom:0;left:0;width:250px;
+background:var(--navy);color:white;padding:23px 16px;
+display:flex;flex-direction:column;z-index:20;
+}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:38px;padding:0 5px}
+.logo{
+width:44px;height:44px;border-radius:12px;
+background:linear-gradient(135deg,#087cf0,#16b8e8);
+display:grid;place-items:center;font-weight:900;font-size:17px
+}
+.brand h2{font-size:21px}
+.brand small{font-size:9px;color:#a6bed8;display:block;margin-top:4px}
+.nav-title{font-size:10px;color:#829bb8;margin:18px 9px 9px;letter-spacing:1px}
+.nav-link{
+width:100%;display:flex;gap:12px;align-items:center;
+padding:12px;border:0;background:none;color:#bdcde0;
+text-align:left;border-radius:8px;margin:2px 0;font-size:13px
+}
+.nav-link:hover,.nav-link.active{background:#12385e;color:white}
+.nav-link.active{border-left:3px solid #13a1ff}
+.nav-icon{width:21px;font-size:17px}
+.side-bottom{margin-top:auto;background:#102e50;padding:14px;border-radius:10px;font-size:11px;color:#c5d6e9;line-height:1.6}
+.side-bottom strong{display:block;color:white;margin-bottom:5px}
+.main{margin-left:250px;min-height:100vh}
+.topbar{
+height:70px;background:white;border-bottom:1px solid var(--border);
+display:flex;justify-content:space-between;align-items:center;
+padding:0 30px;position:sticky;top:0;z-index:10
+}
+.topbar h3{font-size:15px}
+.top-right{display:flex;align-items:center;gap:14px}
+.avatar{width:37px;height:37px;background:#dceeff;color:#087cf0;border-radius:50%;display:grid;place-items:center;font-weight:bold}
+.icon-btn{border:0;background:#f0f4f9;padding:10px;border-radius:8px}
+.menu-btn{display:none}
+.content{padding:30px;max-width:1500px;margin:auto}
+.page{display:none}
+.page.active{display:block}
+.welcome{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:27px}
+h1{font-size:25px;margin-bottom:8px}
+.subtitle{font-size:13px;color:var(--muted)}
+.primary{background:var(--blue);color:white;border:0;border-radius:8px;padding:12px 17px;font-size:12px;font-weight:bold}
+.primary:hover{background:#0063cb}
+.secondary{background:white;border:1px solid var(--border);padding:11px 15px;border-radius:8px;font-size:12px}
+.danger{background:#fff0f0;color:#cf3434;border:0;padding:9px;border-radius:7px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px}
+.stat,.panel,.module-card{background:white;border:1px solid var(--border);border-radius:12px;padding:19px}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-icon{width:38px;height:38px;border-radius:10px;background:#eaf3ff;display:grid;place-items:center;font-size:18px}
+.stat-value{font-size:25px;font-weight:bold;margin-top:13px}
+.stat-note{font-size:10px;color:var(--muted);margin-top:6px}
+.section-title{font-size:15px;margin-bottom:15px}
+.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:20px}
+.panel-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.panel-heading h3{font-size:14px}
+.text-link{background:none;border:0;color:var(--blue);font-size:11px}
+.project{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid var(--border)}
+.project:last-child{border:0}
+.project-icon{width:42px;height:42px;background:#edf5ff;border-radius:10px;display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.project-info{flex:1;min-width:0}
+.project-info strong{font-size:12px;display:block;overflow-wrap:anywhere}
+.project-info small{font-size:10px;color:var(--muted);display:block;margin-top:5px}
+.project-actions{display:flex;gap:5px;flex-wrap:wrap}
+.project-actions button{font-size:10px;padding:7px;border-radius:6px;border:1px solid var(--border);background:white}
+.status{font-size:10px;background:#fff3dc;color:#986800;border-radius:20px;padding:6px 8px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick{border:1px solid var(--border);background:white;border-radius:10px;padding:14px;text-align:left}
+.quick:hover{border-color:var(--blue);background:#f7fbff}
+.quick span{display:block;font-size:21px;margin-bottom:9px}
+.quick strong{font-size:12px}
+.quick small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.ai-banner{background:linear-gradient(120deg,#09264a,#087cf0);color:white;padding:23px;border-radius:12px}
+.ai-banner h3{font-size:16px;margin-bottom:9px}
+.ai-banner p{font-size:12px;color:#d7e9ff;line-height:1.7;margin-bottom:15px}
+.ai-banner button{background:white;color:#087cf0;border:0;padding:10px 14px;border-radius:7px;font-weight:bold}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.empty{text-align:center;padding:30px 10px;color:var(--muted);font-size:12px;line-height:1.8}
+.module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.module-icon{font-size:27px;margin-bottom:15px}
+.module-card h3{font-size:14px;margin-bottom:8px}
+.module-card p{font-size:11px;color:var(--muted);line-height:1.6}
+.module-card button{margin-top:15px}
+.page-header{margin-bottom:23px}
+.modal-bg{position:fixed;inset:0;background:#071b3590;z-index:40;display:none;align-items:center;justify-content:center;padding:15px}
+.modal-bg.show{display:flex}
+.modal{background:white;width:100%;max-width:450px;padding:24px;border-radius:13px;max-height:90vh;overflow:auto}
+.modal h2{font-size:19px;margin-bottom:8px}
+.modal>p{font-size:12px;color:var(--muted);margin-bottom:19px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:bold;margin-bottom:7px}
+.field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:7px;outline:none}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.toast{position:fixed;bottom:20px;right:20px;background:#102c4d;color:white;padding:14px 18px;border-radius:8px;font-size:12px;display:none;z-index:60;max-width:90%}
+@media(max-width:1050px){
+.stats{grid-template-columns:repeat(2,1fr)}
+.layout{grid-template-columns:1fr}
+.module-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+.sidebar{transform:translateX(-100%);transition:.25s}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}
+.topbar{height:62px;padding:0 15px}
+.menu-btn{display:block}
+.content{padding:22px 14px}
+.welcome{flex-direction:column;align-items:stretch}
+.welcome h1{font-size:21px}
+.welcome .primary{width:100%}
+.bottom-grid{grid-template-columns:1fr}
+}
+@media(max-width:390px){
+.module-grid{grid-template-columns:1fr}
+.stat{padding:13px}
+.stat-value{font-size:21px}
+.project{flex-wrap:wrap}
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar" id="sidebar">
+<div class="brand">
+<div class="logo">AGC</div>
+<div><h2>AGC AI</h2><small>ALBERT GUIBERT CONSTRUCTION</small></div>
+</div>
+
+<div class="nav-title">ESPACE PRINCIPAL</div>
+<button class="nav-link active" data-page="dashboard"><span class="nav-icon">▦</span>Tableau de bord</button>
+<button class="nav-link" data-page="projects"><span class="nav-icon">▤</span>Mes projets</button>
+
+<div class="nav-title">CONSTRUCTION</div>
+<button class="nav-link" data-page="plans"><span class="nav-icon">📐</span>Plans 2D / 3D</button>
+<button class="nav-link" data-page="metre"><span class="nav-icon">📏</span>Métré</button>
+<button class="nav-link" data-page="devis"><span class="nav-icon">📄</span>Devis</button>
+<button class="nav-link" data-page="planning"><span class="nav-icon">📅</span>Planification</button>
+<button class="nav-link" data-page="chantier"><span class="nav-icon">🏗</span>Suivi de chantier</button>
+
+<div class="nav-title">INTELLIGENCE ARTIFICIELLE</div>
+<button class="nav-link" data-page="assistant"><span class="nav-icon">✧</span>Assistant IA</button>
+
+<div class="side-bottom">
+<strong>AGC AI Assistance</strong>
+Votre partenaire intelligent pour vos projets de construction.
+</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+<div style="display:flex;align-items:center;gap:12px">
+<button class="icon-btn menu-btn" id="menuBtn">☰</button>
+<h3 id="topTitle">Tableau de bord</h3>
+</div>
+<div class="top-right"><div class="avatar">AG</div></div>
+</header>
+
+<div class="content">
+
+<section class="page active" id="dashboard">
+<div class="welcome">
+<div>
+<h1>Bienvenue sur AGC AI 👋</h1>
+<p class="subtitle">Gérez vos projets de construction intelligemment.</p>
+</div>
+<button class="primary" onclick="openModal()">＋ Nouveau projet</button>
+</div>
+
+<div class="stats">
+<div class="stat">
+<div class="stat-top"><span class="stat-label">Total des projets</span><span class="stat-icon">🏗</span></div>
+<div class="stat-value" id="projectCount">0</div>
+<div class="stat-note">Projets enregistrés</div>
+</div>
+<div class="stat">
+<div class="stat-top"><span class="stat-label">Plans générés</span><span class="stat-icon">📐</span></div>
+<div class="stat-value">0</div><div class="stat-note">À développer</div>
+</div>
+<div class="stat">
+<div class="stat-top"><span class="stat-label">Devis réalisés</span><span class="stat-icon">📄</span></div>
+<div class="stat-value">0</div><div class="stat-note">À développer</div>
+</div>
+<div class="stat">
+<div class="stat-top"><span class="stat-label">Chantiers actifs</span><span class="stat-icon">👷</span></div>
+<div class="stat-value">0</div><div class="stat-note">À développer</div>
+</div>
+</div>
+
+<div class="layout">
+<div class="panel">
+<div class="panel-heading"><h3>Projets récents</h3><button class="text-link" onclick="showPage('projects')">Voir tout →</button></div>
+<div id="recentProjects"></div>
+</div>
+<div class="panel">
+<div class="panel-heading"><h3>Accès rapide</h3></div>
+<div class="quick-grid">
+<button class="quick" onclick="showPage('plans')"><span>📐</span><strong>Plans</strong><small>Plans architecturaux</small></button>
+<button class="quick" onclick="showPage('metre')"><span>📏</span><strong>Métré</strong><small>Quantités de matériaux</small></button>
+<button class="quick" onclick="showPage('devis')"><span>📄</span><strong>Devis</strong><small>Estimation financière</small></button>
+<button class="quick" onclick="showPage('planning')"><span>📅</span><strong>Planning</strong><small>Organisation des travaux</small></button>
+</div>
+</div>
+</div>
+
+<div class="bottom-grid">
+<div class="ai-banner">
+<h3>✧ Assistant intelligent AGC AI</h3>
+<p>Votre futur assistant spécialisé dans la conception et la gestion des projets de construction.</p>
+<button onclick="showPage('assistant')">Accéder à l'assistant →</button>
+</div>
+<div class="panel">
+<h3 class="section-title">À propos d'AGC AI</h3>
+<p class="subtitle" style="line-height:1.8">Une plateforme intelligente dédiée aux particuliers, constructeurs et professionnels du bâtiment.</p>
+</div>
+</div>
+</section>
+
+<section class="page" id="projects">
+<div class="welcome">
+<div><h1>Mes projets</h1><p class="subtitle">Gérez tous vos projets de construction.</p></div>
+<button class="primary" onclick="openModal()">＋ Nouveau projet</button>
+</div>
+<div class="panel">
+<div class="panel-heading"><h3>Liste des projets enregistrés</h3></div>
+<div id="allProjects"></div>
+</div>
+</section>
+
+<section class="page" id="plans">
+<div class="page-header"><h1>Plans architecturaux</h1><p class="subtitle">Concevez et préparez vos documents techniques.</p></div>
+<div class="module-grid">
+<div class="module-card"><div class="module-icon">📐</div><h3>Plan 2D</h3><p>Organisation des espaces et distribution des pièces.</p><button class="primary" onclick="notify('Le générateur 2D sera développé prochainement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">🏠</div><h3>Visualisation 3D</h3><p>Visualisation architecturale du bâtiment.</p><button class="primary" onclick="notify('Le moteur 3D sera développé prochainement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">🏗</div><h3>Plan de fondation</h3><p>Préparation des plans de fondation.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📍</div><h3>Plan d'implantation</h3><p>Organisation de l'implantation.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">⛏</div><h3>Plan de fouille</h3><p>Préparation des travaux de terrassement.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">🚪</div><h3>Plan de distribution</h3><p>Répartition des espaces intérieurs.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+</div>
+</section>
+
+<section class="page" id="metre">
+<div class="page-header"><h1>Métré</h1><p class="subtitle">Calcul des quantités et matériaux nécessaires.</p></div>
+<div class="module-grid">
+<div class="module-card"><div class="module-icon">🧱</div><h3>Matériaux</h3><p>Ciment, sable, gravier, acier et autres.</p><button class="primary" onclick="notify('Calculateur en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📏</div><h3>Quantités</h3><p>Calcul des surfaces et volumes.</p><button class="primary" onclick="notify('Calculateur en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">🏗</div><h3>Ouvrages</h3><p>Quantification des différents ouvrages.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+</div>
+</section>
+
+<section class="page" id="devis">
+<div class="page-header"><h1>Devis</h1><p class="subtitle">Estimation quantitative et financière des travaux.</p></div>
+<div class="module-grid">
+<div class="module-card"><div class="module-icon">📄</div><h3>Devis estimatif</h3><p>Estimation du coût global du projet.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📊</div><h3>Devis quantitatif</h3><p>Liste des quantités et unités.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📥</div><h3>Export PDF</h3><p>Documents professionnels exportables.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+</div>
+</section>
+
+<section class="page" id="planning">
+<div class="page-header"><h1>Planification</h1><p class="subtitle">Organisez les étapes et les délais de vos travaux.</p></div>
+<div class="module-grid">
+<div class="module-card"><div class="module-icon">📅</div><h3>Calendrier</h3><p>Gestion des dates et échéances.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📋</div><h3>Liste des tâches</h3><p>Organisation des tâches du chantier.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+<div class="module-card"><div class="module-icon">📈</div><h3>Diagramme de Gantt</h3><p>Suivi visuel du calendrier du projet.</p><button class="primary" onclick="notify('Module en développement.')">Accéder</button></div>
+</div>
+</section>
+
+<section class="page" id="chantier">
+<div class="page-header"><h1>Suivi de chantier</h1><p class="subtitle">Suivez l'avancement de vos travaux.</p></div>
+<div class="panel empty">Le module de suivi sera développé dans une prochaine étape.</div>
+</section>
+
+<section class="page" id="assistant">
+<div class="page-header"><h1>Assistant IA</h1><p class="subtitle">Votre assistant intelligent spécialisé en construction.</p></div>
+<div class="ai-banner">
+<h3>✧ AGC AI Assistant</h3>
+<p>Le moteur d'intelligence artificielle sera connecté dans une prochaine étape.</p>
+</div>
+<div class="panel" style="margin-top:18px">
+<h3 class="section-title">Exemples de questions</h3>
+<p class="subtitle" style="line-height:2">• Quels matériaux faut-il pour construire une maison ?<br>• Comment organiser un chantier ?<br>• Comment préparer un devis quantitatif ?<br>• Quelles sont les étapes de construction d'une fondation ?</p>
+</div>
+</section>
+
+</div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+<div class="modal">
+<h2 id="modalTitle">Créer un projet</h2>
+<p>Renseignez les informations de votre projet.</p>
+<form id="projectForm">
+<div class="field">
+<label>Nom du projet *</label>
+<input id="projectName" required maxlength="100" placeholder="Ex : Maison familiale">
+</div>
+<div class="field">
+<label>Type de projet</label>
+<select id="projectType">
+<option>Maison individuelle</option>
+<option>Maison RDC</option>
+<option>Maison RDC + 1</option>
+<option>Rénovation</option>
+<option>Autre projet</option>
+</select>
+</div>
+<div class="field">
+<label>Surface estimée (m²)</label>
+<input id="projectSurface" type="number" min="1" placeholder="Ex : 120">
+</div>
+<div class="modal-actions">
+<button type="button" class="secondary" onclick="closeModal()">Annuler</button>
+<button type="submit" class="primary">Enregistrer</button>
+</div>
+</form>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY="agc_ai_projects_v2";
+
+const titles={
+dashboard:"Tableau de bord",
+projects:"Mes projets",
+plans:"Plans architecturaux",
+metre:"Métré",
+devis:"Devis",
+planning:"Planification",
+chantier:"Suivi de chantier",
+assistant:"Assistant IA"
+};
+
+let projects=loadProjects();
+let editingId=null;
+
+function loadProjects(){
+try{
+const data=localStorage.getItem(STORAGE_KEY);
+const parsed=data?JSON.parse(data):[];
+return Array.isArray(parsed)?parsed:[];
+}catch(error){
+console.error("Erreur de lecture:",error);
+return [];
+}
+}
+
+function saveProjects(){
+try{
+localStorage.setItem(STORAGE_KEY,JSON.stringify(projects));
+return true;
+}catch(error){
+notify("Impossible d'enregistrer les projets dans ce navigateur.");
+return false;
+}
+}
+
+function showPage(page){
+document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+document.querySelectorAll(".nav-link").forEach(el=>el.classList.remove("active"));
+const section=document.getElementById(page);
+if(!section)return;
+section.classList.add("active");
+const link=document.querySelector('[data-page="'+page+'"]');
+if(link)link.classList.add("active");
+document.getElementById("topTitle").textContent=titles[page];
+document.getElementById("sidebar").classList.remove("open");
+window.scrollTo(0,0);
+}
+
+document.querySelectorAll(".nav-link").forEach(btn=>{
+btn.addEventListener("click",()=>showPage(btn.dataset.page));
+});
+
+document.getElementById("menuBtn").addEventListener("click",()=>{
+document.getElementById("sidebar").classList.toggle("open");
+});
+
+function openModal(id=null){
+editingId=id;
+const p=id?projects.find(x=>x.id===id):null;
+document.getElementById("modalTitle").textContent=p?"Modifier le projet":"Créer un projet";
+document.getElementById("projectName").value=p?p.name:"";
+document.getElementById("projectType").value=p?p.type:"Maison individuelle";
+document.getElementById("projectSurface").value=p?p.surface||"":"";
+document.getElementById("modal").classList.add("show");
+}
+
+function closeModal(){
+document.getElementById("modal").classList.remove("show");
+editingId=null;
+}
+
+function notify(message){
+const toast=document.getElementById("toast");
+toast.textContent=message;
+toast.style.display="block";
+clearTimeout(window.toastTimer);
+window.toastTimer=setTimeout(()=>toast.style.display="none",3200);
+}
+
+function safe(text){
+return String(text??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
+function projectHTML(p){
+return `
+<div class="project">
+<div class="project-icon">🏠</div>
+<div class="project-info">
+<strong>${safe(p.name)}</strong>
+<small>${safe(p.type)} · ${p.surface?safe(p.surface)+" m²":"Surface non définie"}</small>
+<small>Créé le ${safe(p.date||"Date inconnue")}</small>
+</div>
+<span class="status">À préparer</span>
+<div class="project-actions">
+<button onclick="openModal('${safe(p.id)}')">Modifier</button>
+<button onclick="deleteProject('${safe(p.id)}')" style="color:#ce3333">Supprimer</button>
+</div>
+</div>`;
+}
+
+function renderProjects(){
+const html=projects.map(projectHTML).join("");
+document.getElementById("projectCount").textContent=projects.length;
+document.getElementById("recentProjects").innerHTML=
+html?projects.slice(0,5).map(projectHTML).join(""):'<div class="empty">Aucun projet enregistré.<br>Créez votre premier projet.</div>';
+document.getElementById("allProjects").innerHTML=
+html||'<div class="empty">Aucun projet enregistré.<br>Commencez par créer votre premier projet.</div>';
+}
+
+document.getElementById("projectForm").addEventListener("submit",function(e){
+e.preventDefault();
+
+const name=document.getElementById("projectName").value.trim();
+const type=document.getElementById("projectType").value;
+const surface=document.getElementById("projectSurface").value;
+
+if(!name){
+notify("Veuillez saisir le nom du projet.");
+return;
+}
+if(surface && Number(surface)<=0){
+notify("La surface doit être supérieure à zéro.");
+return;
+}
+
+if(editingId){
+const index=projects.findIndex(p=>p.id===editingId);
+if(index!==-1){
+projects[index]={...projects[index],name,type,surface};
+}
+}else{
+projects.unshift({
+id:Date.now().toString()+"_"+Math.random().toString(36).slice(2,8),
+name,type,surface,
+date:new Date().toLocaleDateString("fr-FR")
+});
+}
+
+if(saveProjects()){
+renderProjects();
+closeModal();
+this.reset();
+showPage("projects");
+notify(editingId?"Projet modifié.":"Projet enregistré avec succès.");
+}
+});
+
+function deleteProject(id){
+const p=projects.find(x=>x.id===id);
+if(!p)return;
+if(!confirm("Voulez-vous vraiment supprimer ce projet ?"))return;
+projects=projects.filter(x=>x.id!==id);
+if(saveProjects()){
+renderProjects();
+notify("Projet supprimé.");
+}
+}
+
+document.getElementById("modal").addEventListener("click",function(e){
+if(e.target===this)closeModal();
+});
+
+renderProjects();
+</script>
+</body>
+</html>
